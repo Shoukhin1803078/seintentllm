@@ -1,0 +1,48 @@
+{
+  "generator_version": "0.3.0",
+  "schema_version": "1.0.0",
+  "seed": 7,
+  "ambiguity": 1.0,
+  "n_incidents": 800,
+  "n_events": 22964,
+  "labels": {
+    "suspicious": 58,
+    "benign": 506,
+    "malicious": 236
+  },
+  "families": {
+    "lolbin_recon": 58,
+    "benign_installer": 59,
+    "benign_admin_scripting": 50,
+    "benign_pua_flagged": 34,
+    "benign_office": 125,
+    "benign_real_captcha": 44,
+    "clickfix_infostealer": 101,
+    "staged_download": 57,
+    "benign_software_update": 70,
+    "benign_cloud_sync": 40,
+    "benign_dev_toolchain": 58,
+    "lotl_credential_theft": 40,
+    "persistence_only": 38,
+    "benign_password_manager": 26
+  },
+  "hard_negatives": 381,
+  "benign_incidents_firing_rules": 283,
+  "benign_rule_fire_rate": 0.559,
+  "malicious_incidents_firing_no_rules": 4,
+  "malicious_rule_miss_rate": 0.017,
+  "rule_definitions": {
+    "R001": "hidden PowerShell window",
+    "R002": "PowerShell ExecutionPolicy bypass",
+    "R003": "unsigned executable launched from Temp",
+    "R004": "remote script download by interpreter",
+    "R005": "password-protected archive extracted to Temp",
+    "R006": "browser credential store accessed by untrusted process",
+    "R007": "rare outbound destination shortly after execution",
+    "R008": "persistence written to a Run key",
+    "R009": "scheduled task created by a non-system process",
+    "R010": "WMI event subscription created",
+    "R011": "clipboard write followed by interpreter execution (ClickFix)",
+    "R012": "LOLBin performing network activity"
+  }
+}

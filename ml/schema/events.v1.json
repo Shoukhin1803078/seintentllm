@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinelllm.local/schema/events.v1.json",
+  "title": "SentinelLLM normalized endpoint event",
+  "description": "Consumer-side contract for Person 1 -> Person 2 handoff. One JSON object per line (JSONL). Breaking changes require a new schema_version and a new file.",
+  "type": "object",
+  "required": ["schema_version", "event_id", "incident_id", "timestamp", "event_type"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "event_id": {"type": "string", "pattern": "^E[0-9]{4,}$",
+      "description": "Globally unique. LLM/VLM outputs must cite these; unknown IDs are rejected."},
+    "incident_id": {"type": "string", "pattern": "^INC-[0-9]{4,}$"},
+    "timestamp": {"type": "string", "format": "date-time", "description": "ISO-8601, UTC, millisecond precision."},
+    "host": {"type": "string", "description": "Pseudonymous host id. Never a real hostname or username."},
+    "event_type": {"enum": [
+      "process_create", "file_create", "file_modify", "file_read",
+      "registry_set", "scheduled_task_create", "service_create", "wmi_subscription",
+      "network_connect", "dns_query", "browser_credential_access",
+      "clipboard_write", "screenshot_capture",
+      "defender_alert", "yara_match", "quarantine_action"
+    ]},
+    "process": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "pid": {"type": "integer", "minimum": 0},
+        "ppid": {"type": "integer", "minimum": 0},
+        "name": {"type": "string"},
+        "path": {"type": "string"},
+        "path_category": {"enum": ["system32", "program_files", "user_appdata", "user_temp", "user_downloads", "user_profile", "other"]},
+        "cmdline": {"type": "string", "description": "UNTRUSTED: attacker-controlled. Never interpolate into an LLM prompt without delimiting and escaping."},
+        "cmdline_len": {"type": "integer", "minimum": 0},
+        "signed": {"type": "boolean"},
+        "signer": {"type": ["string", "null"]},
+        "signer_trusted": {"type": "boolean", "description": "Signer is on the curated trusted-publisher list."},
+        "tree_depth": {"type": "integer", "minimum": 0, "description": "Ancestry depth from session root."},
+        "integrity_level": {"enum": ["low", "medium", "high", "system"]}
+      }
+    },
+    "file": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string", "description": "UNTRUSTED: attacker-controlled filename."},
+        "path_category": {"enum": ["system32", "program_files", "user_appdata", "user_temp", "user_downloads", "user_profile", "other"]},
+        "name_entropy": {"type": "number", "minimum": 0, "description": "Shannon entropy of the basename; proxy for random naming."},
+        "extension": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "signed": {"type": "boolean"},
+        "signer_trusted": {"type": "boolean"},
+        "first_seen_hours": {"type": ["number", "null"], "minimum": 0, "description": "Hours since first observed on this host. null = never seen before (new artifact)."},
+        "prevalence": {"enum": ["unknown", "rare", "common", "allowlisted"]},
+        "archive_encrypted": {"type": "boolean"}
+      }
+    },
+    "registry": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "key": {"type": "string"},
+        "value_name": {"type": "string"},
+        "is_persistence_location": {"type": "boolean"},
+        "value_redacted": {"type": "boolean", "description": "Must be true when the value could contain a secret."}
+      }
+    },
+    "network": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "domain": {"type": ["string", "null"]},
+        "port": {"type": "integer", "minimum": 0, "maximum": 65535},
+        "protocol": {"enum": ["tcp", "udp", "http", "https", "dns"]},
+        "domain_age_days": {"type": ["number", "null"], "minimum": 0},
+        "domain_rarity": {"type": "number", "minimum": 0, "maximum": 1, "description": "0 = ubiquitous in baseline, 1 = never seen before."},
+        "bytes_out": {"type": "integer", "minimum": 0},
+        "reputation": {"enum": ["unknown", "benign", "suspicious", "malicious"]}
+      }
+    },
+    "credential_target": {
+      "type": "object", "additionalProperties": false,
+      "description": "Metadata-only. The contents of credential stores are NEVER collected (proposal 15).",
+      "properties": {
+        "store": {"enum": ["chromium_cookies", "chromium_login_data", "firefox_logins", "dpapi_masterkey", "credential_manager", "other"]},
+        "browser": {"type": "string"},
+        "access_type": {"enum": ["read", "copy", "open_handle"]},
+        "secrets_collected": {"const": false}
+      }
+    },
+    "visual": {
+      "type": "object", "additionalProperties": false,
+      "description": "Screenshot evidence. Images are processed in-memory and never persisted with the event (see docs/schema.md, Privacy).",
+      "properties": {
+        "screenshot_id": {"type": "string"},
+        "url_domain": {"type": ["string", "null"]},
+        "page_text_excerpt": {"type": "string", "description": "UNTRUSTED: page-controlled text. Primary indirect-prompt-injection vector into the LLM analyst."},
+        "capture_trigger": {"enum": ["high_risk_navigation", "clipboard_write", "manual", "synthetic"]},
+        "input_fields_redacted": {"const": true}
+      }
+    },
+    "detection": {
+      "type": "object", "additionalProperties": false,
+      "description": "Independent third-party corroboration, kept separate from our own rules/ML.",
+      "properties": {
+        "source": {"enum": ["defender", "yara", "reputation_feed", "sandbox"]},
+        "verdict": {"enum": ["clean", "suspicious", "malicious"]},
+        "signature_name": {"type": "string"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "rule_hits": {
+      "type": "array", "items": {"type": "string", "pattern": "^R[0-9]{3}$"},
+      "description": "Person 1 rule engine output. IDs defined in rules/rules.md with a stable definition per ID."
+    },
+    "mitre_techniques": {
+      "type": "array", "items": {"type": "string", "pattern": "^T[0-9]{4}(\\.[0-9]{3})?$"},
+      "description": "ATT&CK technique IDs; enables standardized coverage reporting and scores the LLM's behaviour mapping."
+    }
+  }
+}

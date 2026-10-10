@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinelllm.local/schema/incidents.v1.json",
+  "title": "SentinelLLM incident record",
+  "description": "One incident = one correlated group of events = one row in the ML feature table.",
+  "type": "object",
+  "required": ["schema_version", "incident_id", "event_ids", "label", "scenario_family"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "incident_id": {"type": "string", "pattern": "^INC-[0-9]{4,}$"},
+    "host": {"type": "string"},
+    "start_time": {"type": "string", "format": "date-time"},
+    "end_time": {"type": "string", "format": "date-time"},
+    "event_ids": {"type": "array", "items": {"type": "string", "pattern": "^E[0-9]{4,}$"}, "minItems": 1},
+    "rule_hits": {"type": "array", "items": {"type": "string", "pattern": "^R[0-9]{3}$"}},
+    "label": {"enum": ["benign", "suspicious", "malicious"],
+      "description": "Ground truth. Synthetic data: known by construction. Real data: requires a documented labelling protocol."},
+    "scenario_family": {"type": "string",
+      "description": "GROUPING KEY for train/test splits. Never split within a family - near-duplicate incidents leak (guide 14)."},
+    "scenario_variant": {"type": "string"},
+    "is_hard_negative": {"type": "boolean",
+      "description": "Benign activity that superficially resembles the attack (signed updater in Temp, real CAPTCHA, dev toolchain). These drive the false-positive rate that matters."},
+    "ground_truth_stages": {
+      "type": "array",
+      "items": {"enum": ["visual_deception", "script_execution", "remote_download", "archive_staging", "payload_execution", "credential_access", "persistence", "exfiltration"]},
+      "description": "Stage-level ground truth: scores attack-chain reconstruction, not just binary detection."
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source"],
+      "properties": {
+        "source": {"enum": ["synthetic", "vm_simulation", "real_benign_capture", "public_corpus"]},
+        "generator_version": {"type": "string"},
+        "seed": {"type": ["integer", "null"]}
+      }
+    }
+  }
+}

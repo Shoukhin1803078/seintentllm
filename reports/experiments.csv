@@ -1,0 +1,42 @@
+run_id,timestamp,model,feature_groups,n_features,split_policy,seed,threshold,data_version,data_seed,n_incidents,n_train,n_test,python,note,precision,recall,f1,fpr,tp,fp,fn,tn,pr_auc,roc_auc,hard_negative_fpr,n_hard_negatives
+a9a0eb5f88ed,2026-10-10T04:42:09+00:00,rules,proposal_s8_weights,12,time,7,0.5,0.1.0,7,400,280,120,3.12.3,"proposal s8 weights, rules-only baseline",1.0,0.4571,0.6275,0.0,16,0,19,85,0.8919,0.9455,0.0,48
+a9a0eb5f88ed,2026-10-10T04:42:46+00:00,rules,proposal_s8_weights,12,time,7,0.5,0.1.0,7,400,280,120,3.12.3,s8 weights,1.0,0.4571,0.6275,0.0,16,0,19,85,0.8919,0.9455,0.0,48
+c2cc8d744209,2026-10-10T04:42:52+00:00,lr,rules,13,time,7,0.5,0.1.0,7,400,280,120,3.12.3,rules-as-features,0.9211,1.0,0.9589,0.0353,35,3,0,82,0.991,0.998,0.0625,48
+81cee6499488,2026-10-10T04:42:58+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.1.0,7,400,280,120,3.12.3,no rule features,1.0,0.9714,0.9855,0.0,34,0,1,85,1.0,1.0,0.0,48
+ac3e01213376,2026-10-10T04:43:08+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.1.0,7,400,280,120,3.12.3,no rule features,1.0,1.0,1.0,0.0,35,0,0,85,1.0,1.0,0.0,48
+454ee82a7664,2026-10-10T04:43:18+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,time,7,0.5,0.1.0,7,400,280,120,3.12.3,all features,1.0,1.0,1.0,0.0,35,0,0,85,1.0,1.0,0.0,48
+52dc7f99a618,2026-10-10T04:43:24+00:00,rules,proposal_s8_weights,12,random,7,0.5,0.1.0,7,400,280,120,3.12.3,s8 weights,1.0,0.4324,0.6038,0.0,16,0,21,83,0.9274,0.9616,0.0,44
+f8041f97f749,2026-10-10T04:43:31+00:00,lr,rules,13,random,7,0.5,0.1.0,7,400,280,120,3.12.3,rules-as-features,0.9,0.973,0.9351,0.0482,36,4,1,79,0.9842,0.9912,0.0909,44
+1dad2a9a22b4,2026-10-10T04:43:37+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,random,7,0.5,0.1.0,7,400,280,120,3.12.3,no rule features,0.9737,1.0,0.9867,0.012,37,1,0,82,0.9978,0.999,0.0227,44
+0ca3a65a6180,2026-10-10T04:43:48+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,random,7,0.5,0.1.0,7,400,280,120,3.12.3,no rule features,1.0,1.0,1.0,0.0,37,0,0,83,1.0,1.0,0.0,44
+8518a8356bfa,2026-10-10T04:43:57+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,random,7,0.5,0.1.0,7,400,280,120,3.12.3,all features,1.0,1.0,1.0,0.0,37,0,0,83,1.0,1.0,0.0,44
+4b16d8481960,2026-10-10T04:44:04+00:00,rules,proposal_s8_weights,12,family,7,0.5,0.1.0,7,400,308,92,3.12.3,s8 weights,0.0,0.0,0.0,0.0,0,0,29,63,1.0,1.0,0.0,63
+367faf5ac516,2026-10-10T04:44:11+00:00,lr,rules,13,family,7,0.5,0.1.0,7,400,308,92,3.12.3,rules-as-features,0.0,0.0,0.0,0.0,0,0,29,63,0.2538,0.0,0.0,63
+933f5f05bdba,2026-10-10T04:44:19+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.1.0,7,400,308,92,3.12.3,no rule features,1.0,0.0345,0.0667,0.0,1,0,28,63,0.8241,0.908,0.0,63
+2b69307e4c48,2026-10-10T04:44:30+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.1.0,7,400,308,92,3.12.3,no rule features,0.0,0.0,0.0,0.0,0,0,29,63,0.4104,0.5391,0.0,63
+3456597c8e43,2026-10-10T04:44:41+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,family,7,0.5,0.1.0,7,400,308,92,3.12.3,all features,0.0,0.0,0.0,0.0,0,0,29,63,0.1906,0.0837,0.0,63
+a9a0eb5f88ed,2026-10-10T04:57:09+00:00,rules,proposal_s8_weights,12,time,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 s8-weights,1.0,0.3816,0.5524,0.0,29,0,47,164,0.7366,0.8032,0.0,98
+c2cc8d744209,2026-10-10T04:57:16+00:00,lr,rules,13,time,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 rules-as-features,0.8795,0.9605,0.9182,0.061,73,10,3,154,0.9769,0.9858,0.0306,98
+81cee6499488,2026-10-10T04:57:22+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 no-rule-features,0.9868,0.9868,0.9868,0.0061,75,1,1,163,0.9995,0.9998,0.0102,98
+ac3e01213376,2026-10-10T04:57:34+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 no-rule-features,0.9868,0.9868,0.9868,0.0061,75,1,1,163,0.9995,0.9998,0.0102,98
+454ee82a7664,2026-10-10T04:57:46+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,time,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 all-features,0.9868,0.9868,0.9868,0.0061,75,1,1,163,0.9998,0.9999,0.0102,98
+52dc7f99a618,2026-10-10T04:57:52+00:00,rules,proposal_s8_weights,12,random,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 s8-weights,1.0,0.3333,0.5,0.0,24,0,48,168,0.7269,0.8013,0.0,106
+f8041f97f749,2026-10-10T04:57:59+00:00,lr,rules,13,random,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 rules-as-features,0.9844,0.875,0.9265,0.006,63,1,9,167,0.9367,0.9392,0.0094,106
+1dad2a9a22b4,2026-10-10T04:58:06+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,random,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 no-rule-features,1.0,0.9861,0.993,0.0,71,0,1,168,1.0,1.0,0.0,106
+0ca3a65a6180,2026-10-10T04:58:18+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,random,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 no-rule-features,1.0,1.0,1.0,0.0,72,0,0,168,1.0,1.0,0.0,106
+8518a8356bfa,2026-10-10T04:58:30+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,random,7,0.5,0.2.0,7,800,560,240,3.12.3,v2 all-features,1.0,1.0,1.0,0.0,72,0,0,168,1.0,1.0,0.0,106
+4b16d8481960,2026-10-10T04:58:37+00:00,rules,proposal_s8_weights,12,family,7,0.5,0.2.0,7,800,557,243,3.12.3,v2 s8-weights,0.0,0.0,0.0,0.0,0,0,96,147,0.3295,0.1993,0.0,147
+367faf5ac516,2026-10-10T04:58:44+00:00,lr,rules,13,family,7,0.5,0.2.0,7,800,557,243,3.12.3,v2 rules-as-features,1.0,0.1354,0.2385,0.0,13,0,83,147,0.4171,0.2032,0.0,147
+933f5f05bdba,2026-10-10T04:58:51+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.2.0,7,800,557,243,3.12.3,v2 no-rule-features,0.0137,0.0104,0.0118,0.4898,1,72,95,75,0.3504,0.4718,0.4898,147
+2b69307e4c48,2026-10-10T04:59:02+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.2.0,7,800,557,243,3.12.3,v2 no-rule-features,0.0143,0.0104,0.012,0.4694,1,69,95,78,0.2874,0.2766,0.4694,147
+3456597c8e43,2026-10-10T04:59:14+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,family,7,0.5,0.2.0,7,800,557,243,3.12.3,v2 all-features,0.0182,0.0104,0.0132,0.3673,1,54,95,93,0.2519,0.1447,0.3673,147
+a9a0eb5f88ed,2026-10-10T05:01:36+00:00,rules,proposal_s8_weights,12,time,7,0.5,0.3.0,7,800,560,240,3.12.3,v3 s8-weights,1.0,0.3867,0.5577,0.0,29,0,46,165,0.7902,0.8497,0.0,111
+c2cc8d744209,2026-10-10T05:01:43+00:00,lr,rules,13,time,7,0.5,0.3.0,7,800,560,240,3.12.3,v3 rules-as-features,1.0,0.8,0.8889,0.0,60,0,15,165,0.9496,0.9663,0.0,111
+81cee6499488,2026-10-10T05:01:51+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.3.0,7,800,560,240,3.12.3,v3 no-rule-features,1.0,0.9333,0.9655,0.0,70,0,5,165,0.9963,0.9981,0.0,111
+ac3e01213376,2026-10-10T05:02:03+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.3.0,7,800,560,240,3.12.3,v3 no-rule-features,1.0,1.0,1.0,0.0,75,0,0,165,1.0,1.0,0.0,111
+454ee82a7664,2026-10-10T05:02:16+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,time,7,0.5,0.3.0,7,800,560,240,3.12.3,v3 all-features,1.0,1.0,1.0,0.0,75,0,0,165,1.0,1.0,0.0,111
+4b16d8481960,2026-10-10T05:02:23+00:00,rules,proposal_s8_weights,12,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 s8-weights,0.0,0.0,0.0,0.0,0,0,78,134,0.3117,0.2775,0.0,134
+367faf5ac516,2026-10-10T05:02:30+00:00,lr,rules,13,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 rules-as-features,1.0,0.1923,0.3226,0.0,15,0,63,134,0.4345,0.2765,0.0,134
+933f5f05bdba,2026-10-10T05:02:38+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 no-rule-features,0.0,0.0,0.0,0.4328,0,58,78,76,0.3059,0.4229,0.4328,134
+2b69307e4c48,2026-10-10T05:02:51+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 no-rule-features,0.0833,0.0641,0.0725,0.4104,5,55,73,79,0.2772,0.2989,0.4104,134
+3456597c8e43,2026-10-10T05:03:03+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 all-features,0.0426,0.0513,0.0465,0.6716,4,90,74,44,0.2348,0.144,0.6716,134

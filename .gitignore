@@ -1,0 +1,35 @@
+# Python
+.venv
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Models and large binaries (tracked via experiment log, not git)
+*.joblib
+*.pkl
+*.pt
+*.onnx
+
+# Generated outputs - reproducible from a seed, so not tracked.
+# Exception: manifests ARE tracked so a result row can be traced to its dataset.
+data_synthetic/*/events.jsonl
+data_synthetic/*/incidents.jsonl
+reports/features*.csv
+!data_synthetic/*/manifest.json
+
+# Never commit real telemetry, screenshots or captures (proposal s15)
+data_real/
+screenshots/
+*.evtx
+*.pcap
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

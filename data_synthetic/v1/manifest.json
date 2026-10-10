@@ -1,0 +1,40 @@
+{
+  "generator_version": "0.1.0",
+  "schema_version": "1.0.0",
+  "seed": 7,
+  "n_incidents": 400,
+  "n_events": 7199,
+  "labels": {
+    "suspicious": 34,
+    "malicious": 124,
+    "benign": 242
+  },
+  "families": {
+    "lolbin_recon": 34,
+    "clickfix_infostealer": 59,
+    "benign_real_captcha": 31,
+    "benign_office": 87,
+    "persistence_only": 29,
+    "benign_admin_scripting": 27,
+    "benign_dev_toolchain": 36,
+    "benign_installer": 25,
+    "benign_software_update": 36,
+    "staged_download": 36
+  },
+  "hard_negatives": 155,
+  "benign_incidents_firing_rules": 112,
+  "rule_definitions": {
+    "R001": "hidden PowerShell window",
+    "R002": "PowerShell ExecutionPolicy bypass",
+    "R003": "unsigned executable launched from Temp",
+    "R004": "remote script download by interpreter",
+    "R005": "password-protected archive extracted to Temp",
+    "R006": "browser credential store accessed by untrusted process",
+    "R007": "rare outbound destination shortly after execution",
+    "R008": "persistence written to a Run key",
+    "R009": "scheduled task created by a non-system process",
+    "R010": "WMI event subscription created",
+    "R011": "clipboard write followed by interpreter execution (ClickFix)",
+    "R012": "LOLBin performing network activity"
+  }
+}
