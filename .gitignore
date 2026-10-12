@@ -17,10 +17,10 @@ __pycache__/
 
 # Generated outputs - reproducible from a seed, so not tracked.
 # Exception: manifests ARE tracked so a result row can be traced to its dataset.
-data_synthetic/*/events.jsonl
-data_synthetic/*/incidents.jsonl
-reports/features*.csv
-!data_synthetic/*/manifest.json
+# data_synthetic/*/events.jsonl
+# data_synthetic/*/incidents.jsonl
+# reports/features*.csv
+# !data_synthetic/*/manifest.json
 
 # Never commit real telemetry, screenshots or captures (proposal s15)
 data_real/
