@@ -1,0 +1,46 @@
+[
+  {
+    "id": "41",
+    "ioc": "gaga.com",
+    "threat_type": "botnet_cc",
+    "ioc_type": "domain",
+    "malware": "win.dridex",
+    "malware_printable": "Dridex",
+    "confidence_level": 50,
+    "first_seen": "2020-12-08 13:36:27 UTC",
+    "tags": ["exe"]
+  },
+  {
+    "id": "12",
+    "ioc": "139.180.203.104:443",
+    "threat_type": "botnet_cc",
+    "ioc_type": "ip:port",
+    "malware": "win.cobalt_strike",
+    "malware_printable": "Cobalt Strike",
+    "confidence_level": 75,
+    "first_seen": "2020-12-06 09:10:23 UTC",
+    "tags": null
+  },
+  {
+    "id": "4726",
+    "ioc": "http://harold.jetos.com:3606/is-ready",
+    "threat_type": "botnet_cc",
+    "ioc_type": "url",
+    "malware": "win.houdini",
+    "malware_printable": "Houdini",
+    "confidence_level": 100,
+    "first_seen": "2021-03-23 14:50:33 UTC",
+    "tags": ["WSHRAT"]
+  },
+  {
+    "id": "9001",
+    "ioc": "b325c92fa540edeb89b95dbfd4400c1cb33599c66859a87aead820e568a2ebe7",
+    "threat_type": "payload_delivery",
+    "ioc_type": "sha256_hash",
+    "malware": "win.cobalt_strike",
+    "malware_printable": "Cobalt Strike",
+    "confidence_level": 75,
+    "first_seen": "2021-03-23 08:18:06 UTC",
+    "tags": ["cobaltstrike"]
+  }
+]

@@ -32,7 +32,9 @@
       "properties": {
         "source": {"enum": ["synthetic", "vm_simulation", "real_benign_capture", "public_corpus"]},
         "generator_version": {"type": "string"},
-        "seed": {"type": ["integer", "null"]}
+        "seed": {"type": ["integer", "null"]},
+        "intel_version": {"type": ["string", "null"],
+          "description": "abuse.ch reputation index version whose indicators grounded this synthetic incident (intel/build_index.py). Absent for pre-intel data."}
       }
     }
   }

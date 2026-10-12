@@ -10,6 +10,11 @@ train with and without the rule-derived features:
     network        domain rarity, egress volume, reputation
     corroboration  independent AV/YARA/sandbox verdicts
     visual         screenshot presence and deceptive-text cues
+    intel          matches against a real abuse.ch reputation index (opt-in)
+
+The `intel` group is only emitted when a reputation index is supplied with
+--intel (see intel/build_index.py). Without it the output is byte-identical to
+the pre-intel pipeline, so existing experiments still reproduce.
 
 Why this matters: if the model is trained only on `rules`, then "ML only" and
 "Rules only" in the ablation (proposal section 11) measure the same thing and the
@@ -18,6 +23,7 @@ information the deterministic engine does not have.
 
 Usage
     python analysis/features.py --data data_synthetic/v1 --out reports/features.csv
+    python analysis/features.py --data data_synthetic/v4 --intel data_real/intel/v1/reputation.json
 """
 from __future__ import annotations
 
@@ -42,7 +48,7 @@ def _load_jsonl(p: Path) -> list[dict]:
     return [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
 
 
-def extract(events: list[dict], incident: dict) -> dict:
+def extract(events: list[dict], incident: dict, intel: dict | None = None) -> dict:
     """All features for one incident. Keys are prefixed with their group name."""
     f: dict[str, float] = {}
     times = sorted(_ts(e["timestamp"]) for e in events)
@@ -137,10 +143,31 @@ def extract(events: list[dict], incident: dict) -> dict:
     f["visual__screenshot_then_exec"] = int(
         bool(vis) and any(e["event_type"] == "process_create" for e in events))
 
+    # --- intel (opt-in) ------------------------------------------------------
+    # Real reputation lookups against an abuse.ch index. Only the raw attributes
+    # abuse.ch exposes are used (family, threat type, confidence) - deliberately
+    # NOT a bare "is on a blocklist" bit, which would just leak the label.
+    if intel is not None:
+        dom_index = intel.get("domains", {})
+        hash_index = intel.get("hashes", {})
+        bad_domains = sorted({n["domain"] for n in nets
+                              if n.get("domain") and n["domain"] in dom_index})
+        bad_hashes = sorted({x["sha256"] for x in files
+                             if x.get("sha256") and x["sha256"] in hash_index})
+        families = {dom_index[d].get("family") for d in bad_domains}
+        families |= {hash_index[h].get("family") for h in bad_hashes}
+        confs = [dom_index[d].get("confidence") for d in bad_domains
+                 if dom_index[d].get("confidence") is not None]
+        f["intel__n_known_bad_domains"] = len(bad_domains)
+        f["intel__n_known_bad_hashes"] = len(bad_hashes)
+        f["intel__n_families"] = len({x for x in families if x})
+        f["intel__max_confidence"] = max(confs) if confs else 0
+        f["intel__any_match"] = int(bool(bad_domains or bad_hashes))
+
     return f
 
 
-def build(data_dir: Path) -> pd.DataFrame:
+def build(data_dir: Path, intel: dict | None = None) -> pd.DataFrame:
     events = _load_jsonl(data_dir / "events.jsonl")
     incidents = _load_jsonl(data_dir / "incidents.jsonl")
     by_inc: dict[str, list[dict]] = {}
@@ -150,7 +177,7 @@ def build(data_dir: Path) -> pd.DataFrame:
     rows = []
     for inc in incidents:
         row = {"incident_id": inc["incident_id"]}
-        row.update(extract(by_inc[inc["incident_id"]], inc))
+        row.update(extract(by_inc[inc["incident_id"]], inc, intel))
         row["label"] = inc["label"]
         row["y"] = int(inc["label"] == "malicious")
         row["scenario_family"] = inc["scenario_family"]
@@ -178,8 +205,12 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--data", type=Path, default=Path("data_synthetic/v1"))
     p.add_argument("--out", type=Path, default=Path("reports/features.csv"))
+    p.add_argument("--intel", type=Path, default=None,
+                   help="abuse.ch reputation index (intel/build_index.py). Adds the "
+                        "`intel` feature group; omit for the pre-intel feature set.")
     a = p.parse_args()
-    df = build(a.data)
+    intel = json.loads(a.intel.read_text()) if a.intel else None
+    df = build(a.data, intel)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(a.out, index=False)
 

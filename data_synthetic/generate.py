@@ -28,7 +28,7 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-GENERATOR_VERSION = "0.3.0"
+GENERATOR_VERSION = "0.4.0"
 SCHEMA_VERSION = "1.0.0"
 
 TRUSTED_SIGNERS = ["Microsoft Corporation", "Google LLC", "Mozilla Corporation",
@@ -90,6 +90,56 @@ def rand_name(rng: random.Random, style: str) -> str:
 def rare_domain(rng: random.Random) -> str:
     tld = rng.choice([".top", ".xyz", ".ru", ".cc", ".info", ".shop"])
     return rand_name(rng, "random")[:rng.randint(6, 11)] + tld
+
+
+# --- abuse.ch intel grounding ---------------------------------------------
+# Optional. When an index from intel/build_index.py is loaded, malicious
+# incidents stop inventing their indicators: C2/exfil domains and payload
+# hashes are drawn from real ThreatFox / URLhaus / MalwareBazaar entries. The
+# event *structure* is still synthetic; only the indicator values are real.
+INTEL: dict = {}
+
+
+def load_intel(path) -> dict:
+    raw = json.loads(Path(path).read_text())
+    doms = raw.get("domains", {})
+    hashes = raw.get("hashes", {})
+
+    def families(records):
+        return {r.get("family") for r in records if r.get("family")}
+
+    return {
+        "version": raw.get("index_version", "unknown"),
+        "bad_domains": sorted(doms),
+        "bad_hashes": sorted(hashes),
+        "bad_families": sorted(families(doms.values()) | families(hashes.values())),
+    }
+
+
+def ground_events(rng: random.Random, events: list[dict], incidents: list[dict]) -> dict:
+    """Swap synthetic indicators on malicious incidents for real abuse.ch ones.
+
+    Benign incidents are left untouched (they use common/reputable domains by
+    construction). Domains already drawn from COMMON_DOMAINS or LEGIT_HOSTING
+    are also kept, so the "C2 on reputable hosting" evasion stays realistic.
+    """
+    bad_domains = INTEL.get("bad_domains") or []
+    bad_hashes = INTEL.get("bad_hashes") or []
+    mal_inc = {i["incident_id"] for i in incidents if i["label"] == "malicious"}
+    keep = set(COMMON_DOMAINS) | set(LEGIT_HOSTING)
+    n_dom = n_hash = 0
+    for e in events:
+        if e["incident_id"] not in mal_inc:
+            continue
+        net = e.get("network")
+        if net and net.get("domain") and net["domain"] not in keep and bad_domains:
+            net["domain"] = rng.choice(bad_domains)
+            n_dom += 1
+        artifact = e.get("file")
+        if artifact and bad_hashes:
+            artifact["sha256"] = rng.choice(bad_hashes)
+            n_hash += 1
+    return {"domains_grounded": n_dom, "hashes_grounded": n_hash}
 
 
 class Builder:
@@ -721,7 +771,9 @@ MIX = {
 
 
 def generate(n_incidents: int, seed: int, out_dir: Path,
-             ambiguity: float = 1.0) -> dict:
+             ambiguity: float = 1.0, intel: dict | None = None) -> dict:
+    global INTEL
+    INTEL = intel or {}
     rng = random.Random(seed)
     counter = [0]
     base_time = datetime(2026, 3, 2, 9, 0, tzinfo=timezone.utc)
@@ -738,6 +790,9 @@ def generate(n_incidents: int, seed: int, out_dir: Path,
         meta = FAMILIES[family](b)
         b.drain_noise()
 
+        provenance = {"source": "synthetic", "generator_version": GENERATOR_VERSION, "seed": seed}
+        if INTEL:
+            provenance["intel_version"] = INTEL.get("version")
         incidents_out.append({
             "schema_version": SCHEMA_VERSION,
             "incident_id": incident_id,
@@ -751,9 +806,11 @@ def generate(n_incidents: int, seed: int, out_dir: Path,
             "scenario_variant": meta["variant"],
             "is_hard_negative": bool(meta.get("hard", False)),
             "ground_truth_stages": sorted(b.stages),
-            "provenance": {"source": "synthetic", "generator_version": GENERATOR_VERSION, "seed": seed},
+            "provenance": provenance,
         })
         events_out.extend(b.events)
+
+    grounded = ground_events(rng, events_out, incidents_out) if INTEL else {}
 
     out_dir.mkdir(parents=True, exist_ok=True)
     with (out_dir / "events.jsonl").open("w") as f:
@@ -788,6 +845,9 @@ def generate(n_incidents: int, seed: int, out_dir: Path,
         "malicious_rule_miss_rate": round(malicious_no_rules / n_mal, 3) if n_mal else 0.0,
         "rule_definitions": RULES,
     }
+    if INTEL:
+        manifest["intel_version"] = INTEL.get("version")
+        manifest["grounded"] = grounded
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 
@@ -800,8 +860,12 @@ def main() -> None:
     p.add_argument("--ambiguity", type=float, default=1.0,
                    help="0 = clean/separable families, 1 = full evasion overlap. "
                         "Lower values are useful for debugging, not for reporting.")
+    p.add_argument("--intel", type=Path, default=None,
+                   help="abuse.ch reputation index (intel/build_index.py). Grounds "
+                        "malicious C2 domains and payload hashes in real indicators.")
     a = p.parse_args()
-    m = generate(a.n_incidents, a.seed, a.out, a.ambiguity)
+    intel = load_intel(a.intel) if a.intel else None
+    m = generate(a.n_incidents, a.seed, a.out, a.ambiguity, intel)
     print(json.dumps(m, indent=2))
 
 

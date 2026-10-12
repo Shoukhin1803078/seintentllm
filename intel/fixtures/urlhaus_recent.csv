@@ -1,0 +1,3 @@
+"id","dateadded","url","url_status","last_online","threat","tags","urlhaus_link","reporter"
+"318612","2020-03-01 05:57:01","http://malware-cdn.top/payload/x64.exe","online","2020-03-01 06:10:00","malware_download","exe","https://urlhaus.abuse.ch/url/318612/","abuse_ch"
+"318613","2020-03-01 06:22:11","https://drops.example-staging.xyz/a.ps1","online","2020-03-01 06:40:00","malware_download","ps1","https://urlhaus.abuse.ch/url/318613/","reporter7"

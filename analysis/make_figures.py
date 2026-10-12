@@ -252,14 +252,73 @@ def fig_composition() -> None:
     print("05_dataset_composition.png")
 
 
+def fig_intel_signal() -> None:
+    """Real abuse.ch intel: clean on file hashes, noisy on domains.
+
+    Reads the feature table produced with --intel (make features-intel). The two
+    panels are the whole finding: known-bad hashes never touch benign traffic,
+    while known-bad domains flag benign incidents whose legitimate infrastructure
+    (github.com) is itself abused and therefore listed by URLhaus.
+    """
+    df = pd.read_csv("reports/features_intel.csv")
+    labels = ["benign", "suspicious", "malicious"]
+    colors = {"benign": S1, "suspicious": S3, "malicious": S2}
+    panels = [("Known-bad file hash", "intel__n_known_bad_hashes"),
+              ("Known-bad domain", "intel__n_known_bad_domains")]
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.4, 3.6), sharey=True)
+    for ax, (title, col) in zip(axes, panels):
+        counts = [int(((df["label"] == l) & (df[col] > 0)).sum()) for l in labels]
+        bars = ax.bar(range(len(labels)), counts, width=0.6,
+                      color=[colors[l] for l in labels], zorder=3)
+        for b, c in zip(bars, counts):
+            ax.text(b.get_x() + b.get_width() / 2, c + max(counts + [1]) * 0.02, str(c),
+                    ha="center", va="bottom", fontsize=9, color=INK2)
+        ax.set_xticks(range(len(labels)))
+        ax.set_xticklabels(labels)
+        ax.set_title(title, loc="left", color=INK, fontsize=11)
+        ax.set_ylim(0, max(counts + [1]) * 1.22)
+        ax.grid(axis="y", alpha=0.7)
+        ax.set_axisbelow(True)
+        ax.tick_params(length=0)
+    axes[0].set_ylabel("incidents matching", color=INK2)
+    fig.suptitle("Real threat intel separates malware on hashes, not on domains",
+                 x=0.012, ha="left", fontsize=13, fontweight="600", color=INK)
+    fig.text(0.012, -0.05,
+             "abuse.ch index: 11,246 domains \u00b7 781 IPs \u00b7 3,168 hashes. Known-bad hashes never hit benign "
+             "traffic; known-bad domains flag benign incidents \u2014 all github.com \u2014 because legitimate "
+             "infrastructure is abused.",
+             fontsize=8.5, color=MUTED, ha="left")
+    fig.tight_layout(rect=(0, 0, 1, 0.9))
+    fig.savefig(OUT / "06_intel_signal.png", bbox_inches="tight")
+    plt.close(fig)
+    print("06_intel_signal.png")
+
+
+def _skip_if_missing(name: str, fn, inputs: list[str]) -> None:
+    """Run a figure only when all its inputs exist.
+
+    Some figures depend on historical feature tables that the current generator
+    can no longer reproduce (e.g. features_v2.csv predates the confound fix), so
+    a missing input is expected, not an error.
+    """
+    missing = [p for p in inputs if not Path(p).exists()]
+    if missing:
+        print(f"skip {name}: missing {', '.join(missing)}")
+        return
+    fn()
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     log = pd.read_csv("reports/experiments.csv")
     fig_ablation(log)
-    fig_confound()
     fig_rules_tradeoff(log)
-    fig_importance()
-    fig_composition()
+    _skip_if_missing("02_generator_confounds.png", fig_confound,
+                     ["reports/features_v2.csv", "reports/features_v3.csv"])
+    _skip_if_missing("04_feature_importance.png", fig_importance, ["reports/features_v3.csv"])
+    _skip_if_missing("05_dataset_composition.png", fig_composition, ["reports/features_v3.csv"])
+    _skip_if_missing("06_intel_signal.png", fig_intel_signal, ["reports/features_intel.csv"])
     print(f"\nfigures written to {OUT}/")
 
 

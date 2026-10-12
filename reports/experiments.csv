@@ -40,3 +40,5 @@ ac3e01213376,2026-10-10T05:02:03+00:00,rf,"static,temporal,graph,network,visual,
 933f5f05bdba,2026-10-10T05:02:38+00:00,lr,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 no-rule-features,0.0,0.0,0.0,0.4328,0,58,78,76,0.3059,0.4229,0.4328,134
 2b69307e4c48,2026-10-10T05:02:51+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 no-rule-features,0.0833,0.0641,0.0725,0.4104,5,55,73,79,0.2772,0.2989,0.4104,134
 3456597c8e43,2026-10-10T05:03:03+00:00,rf,"corroboration,graph,network,rules,static,temporal,visual",58,family,7,0.5,0.3.0,7,800,588,212,3.12.3,v3 all-features,0.0426,0.0513,0.0465,0.6716,4,90,74,44,0.2348,0.144,0.6716,134
+ac3e01213376,2026-10-12T06:03:01+00:00,rf,"static,temporal,graph,network,visual,corroboration",45,time,7,0.5,0.4.0,7,800,560,240,3.10.20,"v4 grounded, no intel features",1.0,1.0,1.0,0.0,75,0,0,165,1.0,1.0,0.0,111
+a8657e7b29fa,2026-10-12T06:03:02+00:00,rf,"static,temporal,graph,network,visual,corroboration,intel",50,time,7,0.5,0.4.0,7,800,560,240,3.10.20,"v4 grounded, + intel features",1.0,1.0,1.0,0.0,75,0,0,165,1.0,1.0,0.0,111

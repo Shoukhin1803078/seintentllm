@@ -28,6 +28,12 @@ screenshots/
 *.evtx
 *.pcap
 
+# abuse.ch Auth-Key - never commit (get one at https://auth.abuse.ch/)
+.abusech_key
+.env
+.env.*
+!.env.example
+
 # OS / editor
 .DS_Store
 Thumbs.db

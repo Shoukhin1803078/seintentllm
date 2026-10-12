@@ -42,21 +42,27 @@ on real benign activity. That requires a real benign capture from Person 1.
 |---|---|
 | `ml/schema/` | versioned JSON Schema — the Person 1 ↔ Person 2 contract |
 | `data_synthetic/generate.py` | deterministic event generator, 10 scenario families |
-| `analysis/features.py` | incident-level features in 7 selectable **groups** |
+| `analysis/features.py` | incident-level features in 7 selectable **groups** (+ opt-in `intel`) |
 | `ml/baseline.py` | LR / RF / rules-only baselines, 3 split policies, experiment log |
+| `intel/` | abuse.ch client + reputation index builder (opt-in, `docs/intel.md`) |
 | `tests/` | schema conformance + referential integrity + privacy invariants |
 | `docs/schema.md` | the handoff contract |
+| `docs/intel.md` | abuse.ch reputation layer: rationale, mapping, limits |
 | `docs/threat_model_ai.md` | prompt injection, allowlist suppression, screenshot privacy |
 | `reports/experiments.csv` | append-only log: seed, split, groups, data version, metrics |
 
 ## Feature groups
 
-`rules static temporal graph network visual corroboration`
+`rules static temporal graph network visual corroboration` (+ `intel`, opt-in)
 
 Group selection is what makes the ablation meaningful. If the ML model is trained
 only on rule-derived features, then "ML only" and "Rules only" in the proposal's
 ablation (§11) measure the same thing. Training on the non-rule groups tests
 whether a learned model carries information the deterministic engine lacks.
+
+The `intel` group is added only when a real abuse.ch reputation index is supplied
+(`make features-intel`, see `docs/intel.md`); it grounds network/file reputation
+features in live threat intel. Without it the feature set is unchanged.
 
 ```bash
 python ml/baseline.py --model rf --groups static,temporal,graph,network --split time

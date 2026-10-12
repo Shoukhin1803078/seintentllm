@@ -43,9 +43,44 @@ are hard negatives — benign activity that fires attack rules (signed updaters
 staging in Temp, portable password managers reading credential stores, genuine
 CAPTCHA pages, PUA false alarms). 55.9% of benign incidents trip at least one rule.
 
+### `figures/06_intel_signal.png`
+Real abuse.ch threat intel is a clean signal on file hashes and a noisy one on
+domains. Known-bad hashes (3,168 in the index) land only on malicious incidents —
+**0 benign, 0 suspicious**. Known-bad domains (11,246) flag **414 benign
+incidents, every one on `github.com`**, because legitimate infrastructure is abused
+and therefore listed. This is the same reputable-hosting failure the threat model
+warns about (`docs/threat_model_ai.md`, T3), now measured. See `docs/intel.md`.
+
+## Experiments
+
+`reports/experiments.csv` is append-only; each `ml/baseline.py` run adds a row.
+The intel runs (`make intel-experiment`) compare an RF detector with and without
+the `intel` feature group on the grounded v4 dataset:
+
+| Config (v0.4.0, chronological) | F1 | FPR |
+|---|---|---|
+| RF · non-rule features | 1.000 | 0.000 |
+| RF · non-rule + `intel` | 1.000 | 0.000 |
+
+The intel group changes nothing — the synthetic corpus is already separable
+without it, which is the same finding as `reports/findings_week1.md`, not
+evidence that intel helps. These rows depend on a **live abuse.ch index snapshot**,
+so unlike the seed-reproducible rows they are a record, not a reproduction.
+
+## Regenerating
+
+```bash
+make figures    # renders every figure whose inputs are present
+```
+
+Figures 02/04/05 need historical feature tables (`reports/features_v2.csv`,
+`features_v3.csv`); `features_v2.csv` predates the confound fix and cannot be
+regenerated from the current generator. Those figures are skipped with a warning
+rather than failing the run. Figure 06 needs `make features-intel` first.
+
 ## Related
 
 - `reports/findings_week1.md` — written analysis behind these figures
 - `reports/ablation.md` — the same results as a table, generated from the log
-- `reports/experiments.csv` — append-only run log (28 runs)
+- `reports/experiments.csv` — append-only run log (one row per baseline run)
 - `STATUS.md` — what is done and what remains
